@@ -5,7 +5,7 @@ Testes automatizados para o módulo de sincronização de cache com PostgreSQL e
 import pytest
 from unittest.mock import Mock, patch, MagicMock
 from datetime import datetime
-import cache_updater
+import testes.cache_updater as cache_updater
 
 # Dados de exemplo retornados pela consulta de voos ativos
 voos_ativos_exemplo = [
