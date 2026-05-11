@@ -10,9 +10,19 @@ CREATE TABLE aeroportos (
     fuso_horario VARCHAR(50)
 );
 
+CREATE TABLE aeronaves (
+    id SERIAL PRIMARY KEY,
+    matricula VARCHAR(20) NOT NULL UNIQUE,
+    modelo VARCHAR(50) NOT NULL,
+    capacidade INTEGER,
+    ano_fabricacao INTEGER,
+    status VARCHAR(20) DEFAULT 'ATIVO'
+);
+
 CREATE TABLE voos (
     id SERIAL PRIMARY KEY,
     codigo_voo VARCHAR(10) NOT NULL,
+    aeronave_id INTEGER NOT NULL REFERENCES aeronaves(id),
     aeroporto_origem_id INTEGER NOT NULL REFERENCES aeroportos(id),
     aeroporto_destino_id INTEGER NOT NULL REFERENCES aeroportos(id),
     saida_prevista TIMESTAMP NOT NULL,
