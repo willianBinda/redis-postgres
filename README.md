@@ -1,4 +1,4 @@
-# 1 Criar um arquivo .env e adicionar as seguintes variáveis
+# 1 - Criar um arquivo .env e adicionar as seguintes variáveis
 
 POSTGRES_HOST=
 POSTGRES_DB=
