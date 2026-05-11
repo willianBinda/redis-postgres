@@ -1,13 +1,9 @@
 
 from psycopg2.extras import RealDictCursor
 from datetime import datetime
-import logging
 from db.redis import redis_client
 from db.postgres import pg_conn
 
-# Configuração básica de log
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
 
 # Chaves utilizadas no Redis
 REDIS_LIST_KEY = "voos_em_curso"
@@ -77,10 +73,11 @@ def atualizar_cache_redis(dados_voos):
         "atualizado_em": datetime.now().isoformat()
     })
 
-    logger.info(f"Cache atualizado com {len(dados_voos)} voos em curso.")
+    print(f"Cache atualizado com {len(dados_voos)} voos em curso.")
 
 
 def consultar_cache_redis():
+    print("\n=== CONSULTA AO CACHE REDIS ===")
     ids_voos = redis_client.lrange(REDIS_LIST_KEY, 0, -1)
 
     for voo_id in ids_voos:
@@ -99,13 +96,15 @@ def consultar_cache_redis():
 def main():
     try:
         voos_ativos = buscar_voos_ativos()
+        print(f"Voos ativos encontrados no postgres: {len(voos_ativos)}\n")
+
         pg_conn.close()
 
         atualizar_cache_redis(voos_ativos)
 
         consultar_cache_redis()
     except Exception as erro:
-        logger.error(f"Erro na atualização do cache: {erro}", exc_info=True)
+        print(f"Erro na atualização do cache: {erro}")
 
 if __name__ == "__main__":
     main()
