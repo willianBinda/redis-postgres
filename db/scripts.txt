@@ -1,0 +1,128 @@
+
+BASE 1 – RELACIONAL (PostgreSQL/MySQL)
+
+CREATE TABLE Clientes (
+    id INT PRIMARY KEY,
+    cpf CHAR(11) UNIQUE,
+    nome VARCHAR(100),
+    endereco VARCHAR(200),
+    cidade VARCHAR(100),
+    uf CHAR(2),
+    email VARCHAR(100)
+);
+
+CREATE TABLE Produtos (
+    id INT PRIMARY KEY,
+    produto VARCHAR(100),
+    valor DECIMAL(10,2),
+    quantidade INT,
+    tipo VARCHAR(50)
+);
+
+CREATE TABLE Compras (
+    id INT PRIMARY KEY,
+    id_produto INT,
+    data DATE,
+    id_cliente INT,
+    FOREIGN KEY (id_produto) REFERENCES Produtos(id),
+    FOREIGN KEY (id_cliente) REFERENCES Clientes(id)
+);
+
+INSERT INTO Clientes VALUES
+(1,'11111111111','João Silva','Rua A, 100','Chapecó','SC','joao@gmail.com'),
+(2,'22222222222','Maria Souza','Rua B, 200','Xaxim','SC','maria@gmail.com'),
+(3,'33333333333','Pedro Santos','Rua C, 300','Concórdia','SC','pedro@gmail.com'),
+(4,'44444444444','Ana Costa','Rua D, 400','Chapecó','SC','ana@gmail.com'),
+(5,'55555555555','Carlos Lima','Rua E, 500','Xanxerê','SC','carlos@gmail.com');
+
+INSERT INTO Produtos VALUES
+(1,'Bola de Futebol',120.00,50,'Esportes'),
+(2,'Notebook Gamer',5500.00,10,'Tecnologia'),
+(3,'Violão',850.00,15,'Música'),
+(4,'Livro Python',90.00,100,'Livros'),
+(5,'Smart TV 50"',2800.00,20,'Eletrônicos');
+
+INSERT INTO Compras VALUES
+(1,1,'2025-06-01',1),
+(2,2,'2025-06-02',2),
+(3,3,'2025-06-03',3),
+(4,4,'2025-06-04',1),
+(5,5,'2025-06-05',4),
+(6,1,'2025-06-06',5),
+(7,3,'2025-06-07',2);
+
+====================================================
+BASE 2 – MONGODB
+====================================================
+
+use("recomendacoes");
+
+db.createCollection("interesses_clientes");
+
+db.interesses_clientes.insertMany([
+{
+    "_id": 1,
+    "cpf": "11111111111",
+    "nome": "João Silva",
+    "interesses": ["Futebol", "Corrida", "Tecnologia"]
+},
+{
+    "_id": 2,
+    "cpf": "22222222222",
+    "nome": "Maria Souza",
+    "interesses": ["Cinema", "Séries", "Música"]
+},
+{
+    "_id": 3,
+    "cpf": "33333333333",
+    "nome": "Pedro Santos",
+    "interesses": ["Tecnologia", "Games", "Programação"]
+},
+{
+    "_id": 4,
+    "cpf": "44444444444",
+    "nome": "Ana Costa",
+    "interesses": ["Livros", "Educação", "Filmes"]
+},
+{
+    "_id": 5,
+    "cpf": "55555555555",
+    "nome": "Carlos Lima",
+    "interesses": ["Futebol", "Música", "Viagens"]
+}
+]);
+
+====================================================
+BASE 3 – NEO4J
+====================================================
+
+CREATE
+(joao:Pessoa {id:1, cpf:'11111111111', nome:'João Silva'}),
+(maria:Pessoa {id:2, cpf:'22222222222', nome:'Maria Souza'}),
+(pedro:Pessoa {id:3, cpf:'33333333333', nome:'Pedro Santos'}),
+(ana:Pessoa {id:4, cpf:'44444444444', nome:'Ana Costa'}),
+(carlos:Pessoa {id:5, cpf:'55555555555', nome:'Carlos Lima'}),
+(bruno:Pessoa {id:6, cpf:'66666666666', nome:'Bruno Alves'}),
+(julia:Pessoa {id:7, cpf:'77777777777', nome:'Julia Martins'});
+
+MATCH (joao:Pessoa {id:1}),
+      (maria:Pessoa {id:2}),
+      (pedro:Pessoa {id:3}),
+      (ana:Pessoa {id:4}),
+      (carlos:Pessoa {id:5}),
+      (bruno:Pessoa {id:6}),
+      (julia:Pessoa {id:7})
+
+CREATE
+(joao)-[:AMIGO_DE]->(maria),
+(maria)-[:AMIGO_DE]->(joao),
+(joao)-[:AMIGO_DE]->(pedro),
+(pedro)-[:AMIGO_DE]->(joao),
+(maria)-[:AMIGO_DE]->(ana),
+(ana)-[:AMIGO_DE]->(maria),
+(carlos)-[:AMIGO_DE]->(joao),
+(joao)-[:AMIGO_DE]->(carlos),
+(bruno)-[:AMIGO_DE]->(joao),
+(joao)-[:AMIGO_DE]->(bruno),
+(julia)-[:AMIGO_DE]->(maria),
+(maria)-[:AMIGO_DE]->(julia);

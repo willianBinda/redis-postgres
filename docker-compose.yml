@@ -28,32 +28,32 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
-  # mongodb:
-  #   image: mongo:7
-  #   container_name: mongodb
-  #   environment:
-  #     MONGO_INITDB_ROOT_USERNAME: root
-  #     MONGO_INITDB_ROOT_PASSWORD: root
-  #   ports:
-  #     - "27017:27017"
-  #   volumes:
-  #     - mongo_data:/data/db
+  mongodb:
+    image: mongo:7
+    container_name: mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
 
-  # neo4j:
-  #   image: neo4j:5
-  #   container_name: neo4j
-  #   environment:
-  #     NEO4J_AUTH: neo4j/senha123
-  #   ports:
-  #     - "7474:7474" # Interface web
-  #     - "7687:7687" # Bolt (conexão)
-  #   volumes:
-  #     - neo4j_data:/data
-  #     - neo4j_logs:/logs
+  neo4j:
+    image: neo4j:5
+    container_name: neo4j
+    environment:
+      NEO4J_AUTH: neo4j/senha123
+    ports:
+      - "7474:7474" # Interface web
+      - "7687:7687" # Bolt (conexão)
+    volumes:
+      - neo4j_data:/data
+      - neo4j_logs:/logs
 
 volumes:
-  # mongo_data:
-  # neo4j_data:
-  # neo4j_logs:
+  mongo_data:
+  neo4j_data:
+  neo4j_logs:
   redis_data:
   postgres_data:
