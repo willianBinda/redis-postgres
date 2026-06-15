@@ -1,16 +1,22 @@
 from fastapi import FastAPI
-
+from db.base import redis_client;
+import json
 
 app = FastAPI()
 
-@app.get("/buscarVoos")
-def home():
+@app.get("/buscarDadosTodosCliente")
+def buscarDadosTodosCliente():
     
-    return ""
+    dados_json = redis_client.get("dadosTodosClientes")
 
+    if dados_json:
+        return json.loads(dados_json)
 
-@app.post("/cadastrarVoo")
-def cadastrar_voo():
-   
-    
-    return {"error": "Erro ao cadastrar voo"}
+    dados = consolidar_dados()
+
+    redis_client.set(
+        "dadosTodosClientes",
+        json.dumps(dados)
+    )
+    return json.loads(dados)
+
