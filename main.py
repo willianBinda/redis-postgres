@@ -1,26 +1,23 @@
 from fastapi import FastAPI
 from db.base import redis_client;
 import json
+from api import buscarDadosTodosCliente,buscarDadosClientesAmigos,buscarDadosClientesCompras,buscarDadosAmigosClienteRecomendacao
 
 app = FastAPI()
 
-@app.get("/buscarDadosTodosCliente")
-def buscarDadosTodosCliente():
-    
+@app.get("/buscarTodosCliente")
+def buscarTodosCliente():
     dados_json = redis_client.get("dadosTodosClientes")
 
     if dados_json:
         return json.loads(dados_json)
 
-    dados = consolidar_dados()
+    dados = buscarDadosTodosCliente()
 
-    redis_client.set("dadosTodosClientes", json.dumps(dados))
-
-    return json.loads(dados)
+    return dados
 
 @app.get("/buscarClientesAmigos")
 def buscarClientesAmigos():
-    
     dados_json = redis_client.get("clientesAmigos")
 
     if dados_json:
@@ -28,9 +25,7 @@ def buscarClientesAmigos():
 
     dados = buscarDadosClientesAmigos()
 
-    redis_client.set("clientesAmigos", json.dumps(dados))
-
-    return json.loads(dados)
+    return dados
 
 @app.get("/buscarClientesCompra")
 def buscarClientesCompra():
@@ -40,11 +35,9 @@ def buscarClientesCompra():
     if dados_json:
         return json.loads(dados_json)
 
-    dados = buscarDadosClientesCompra()
+    dados = buscarDadosClientesCompras()
 
-    redis_client.set("clientesCompra", json.dumps(dados))
-
-    return json.loads(dados)
+    return dados
 
 @app.get("/buscarAmigosClienteRecomendacao")
 def buscarAmigosClienteRecomendacao():
@@ -58,5 +51,5 @@ def buscarAmigosClienteRecomendacao():
 
     redis_client.set("amigoClienteRecomendacao", json.dumps(dados))
 
-    return json.loads(dados)
+    return dados
 
