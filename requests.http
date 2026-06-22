@@ -1,0 +1,268 @@
+@base = http://localhost:8000
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CACHE (Redis)
+# ─────────────────────────────────────────────────────────────────────────────
+
+### Status de cada chave no Redis (HIT ou MISS)
+GET {{base}}/cache/status
+
+###
+
+### Limpar todo o cache Redis
+DELETE {{base}}/cache
+
+###
+
+### Recarregar cache: busca dados de todos os BDs e salva no Redis
+POST {{base}}/cache/refresh
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CONSULTAS REDIS (GET com cache)
+# ─────────────────────────────────────────────────────────────────────────────
+
+### Todos os clientes (PostgreSQL -> Redis)
+GET {{base}}/buscarTodosCliente
+
+###
+
+### Clientes com seus amigos (PostgreSQL + Neo4j -> Redis)
+GET {{base}}/buscarClientesAmigos
+
+###
+
+### Clientes com suas compras (PostgreSQL -> Redis)
+GET {{base}}/buscarClientesCompra
+
+###
+
+### Amigos dos clientes com recomendacoes (todos os BDs -> Redis)
+GET {{base}}/buscarAmigosClienteRecomendacao
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CLIENTES (PostgreSQL) - CRUD
+# ─────────────────────────────────────────────────────────────────────────────
+
+### Listar todos os clientes
+GET {{base}}/clientes
+
+###
+
+### Buscar cliente por ID
+GET {{base}}/clientes/1
+
+###
+
+### Criar novo cliente (invalida cache automaticamente)
+POST {{base}}/clientes
+Content-Type: application/json
+
+{
+  "id": 6,
+  "cpf": "66666666666",
+  "nome": "Bruno Alves",
+  "endereco": "Rua F, 600",
+  "cidade": "Chapeco",
+  "uf": "SC",
+  "email": "bruno@gmail.com"
+}
+
+###
+
+### Atualizar cliente parcialmente (so os campos enviados sao alterados)
+PUT {{base}}/clientes/6
+Content-Type: application/json
+
+{
+  "email": "bruno.alves@novo.com",
+  "cidade": "Xanxere"
+}
+
+###
+
+### Remover cliente (invalida cache automaticamente)
+DELETE {{base}}/clientes/6
+
+# ─────────────────────────────────────────────────────────────────────────────
+# PRODUTOS (PostgreSQL) - CRUD
+# ─────────────────────────────────────────────────────────────────────────────
+
+### Listar todos os produtos
+GET {{base}}/produtos
+
+###
+
+### Buscar produto por ID
+GET {{base}}/produtos/1
+
+###
+
+### Criar novo produto
+POST {{base}}/produtos
+Content-Type: application/json
+
+{
+  "id": 6,
+  "produto": "Fone Bluetooth",
+  "valor": 299.90,
+  "quantidade": 30,
+  "tipo": "Eletronicos"
+}
+
+###
+
+### Atualizar produto
+PUT {{base}}/produtos/6
+Content-Type: application/json
+
+{
+  "valor": 249.90,
+  "quantidade": 25
+}
+
+###
+
+### Remover produto
+DELETE {{base}}/produtos/6
+
+# ─────────────────────────────────────────────────────────────────────────────
+# COMPRAS (PostgreSQL) - CRUD
+# ─────────────────────────────────────────────────────────────────────────────
+
+### Listar todas as compras
+GET {{base}}/compras
+
+###
+
+### Buscar compra por ID
+GET {{base}}/compras/1
+
+###
+
+### Criar nova compra
+POST {{base}}/compras
+Content-Type: application/json
+
+{
+  "id": 8,
+  "id_produto": 2,
+  "data": "2025-06-10",
+  "id_cliente": 3
+}
+
+###
+
+### Atualizar compra
+PUT {{base}}/compras/8
+Content-Type: application/json
+
+{
+  "data": "2025-06-20"
+}
+
+###
+
+### Remover compra
+DELETE {{base}}/compras/8
+
+# ─────────────────────────────────────────────────────────────────────────────
+# INTERESSES (MongoDB) - CRUD
+# ─────────────────────────────────────────────────────────────────────────────
+
+### Listar todos os interesses
+GET {{base}}/interesses
+
+###
+
+### Buscar interesses de um cliente pelo CPF
+GET {{base}}/interesses/11111111111
+
+###
+
+### Criar registro de interesses
+POST {{base}}/interesses
+Content-Type: application/json
+
+{
+  "cpf": "99999999999",
+  "nome": "Teste Usuario",
+  "interesses": ["Futebol", "Tecnologia", "Cinema"]
+}
+
+###
+
+### Atualizar interesses pelo CPF
+PUT {{base}}/interesses/99999999999
+Content-Type: application/json
+
+{
+  "interesses": ["Futebol", "Tecnologia", "Cinema", "Musica"]
+}
+
+###
+
+### Remover interesses pelo CPF
+DELETE {{base}}/interesses/99999999999
+
+# ─────────────────────────────────────────────────────────────────────────────
+# PESSOAS (Neo4j) - CRUD
+# ─────────────────────────────────────────────────────────────────────────────
+
+### Listar todas as pessoas no grafo
+GET {{base}}/pessoas
+
+###
+
+### Buscar pessoa pelo CPF
+GET {{base}}/pessoas/11111111111
+
+###
+
+### Listar amigos de uma pessoa
+GET {{base}}/pessoas/11111111111/amizades
+
+###
+
+### Criar nova pessoa no grafo
+POST {{base}}/pessoas
+Content-Type: application/json
+
+{
+  "id": 8,
+  "cpf": "88888888888",
+  "nome": "Novo Amigo"
+}
+
+###
+
+### Remover pessoa do grafo (DETACH DELETE - remove tambem as relacoes)
+DELETE {{base}}/pessoas/88888888888
+
+# ─────────────────────────────────────────────────────────────────────────────
+# AMIZADES (Neo4j) - CRUD
+# ─────────────────────────────────────────────────────────────────────────────
+
+### Criar amizade bidirecional entre dois CPFs
+POST {{base}}/amizades
+Content-Type: application/json
+
+{
+  "cpf_origem": "11111111111",
+  "cpf_destino": "88888888888"
+}
+
+###
+
+### Remover amizade bidirecional entre dois CPFs
+DELETE {{base}}/amizades/11111111111/88888888888
+
+# ─────────────────────────────────────────────────────────────────────────────
+# DEMONSTRACAO: fluxo de invalidacao de cache
+#
+# 1. GET /cache/status       -> ver quais chaves estao no Redis
+# 2. GET /buscarTodosCliente -> popula dadosTodosClientes no Redis
+# 3. GET /cache/status       -> agora aparece HIT
+# 4. POST /clientes          -> cria cliente, invalida cache
+# 5. GET /cache/status       -> cache foi invalidado (MISS)
+# 6. GET /buscarTodosCliente -> busca novamente e repovoа o Redis
+# ─────────────────────────────────────────────────────────────────────────────
